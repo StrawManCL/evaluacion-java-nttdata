@@ -43,7 +43,7 @@ Este proyecto implementa una API RESTful para la gestión de usuarios, desarroll
 
 2. **Clonar el repositorio**
    ```sh
-   git clone <URL_DEL_REPOSITORIO>
+   git clone git@github.com:StrawManCL/evaluacion-java-nttdata.git
    cd evaluacion-java-nttdata
    ```
 
