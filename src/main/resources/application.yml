@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: evaluacion-java-nttdata
+  h2:
+    console:
+      path: /h2
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:usuarios
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+springdoc:
+  swagger-ui:
+    path: /doc.html
+application:
+  version: 0.0.1
