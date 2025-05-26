@@ -1,25 +1,28 @@
 package cl.nttdata.evaluacion.service.impl;
 
-import cl.nttdata.evaluacion.model.User;
-import cl.nttdata.evaluacion.repository.UserRepository;
+import cl.nttdata.evaluacion.model.Usuario;
+import cl.nttdata.evaluacion.repository.UsuarioRepository;
 import cl.nttdata.evaluacion.service.MyUserDetailsService;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 @Service
 @RequiredArgsConstructor
 public class MyUserDetailsServiceImpl implements MyUserDetailsService {
-    private final UserRepository usuariosRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = usuariosRepository.findByEmail(email);
-        return new org.springframework.security.core.userdetails.User(user.getEmail(),
-                "{noop}" + user.getPassword(),
-                Collections.emptyList());
-    }
+  private final UsuarioRepository usuarioRepository;
+
+  @Override
+  public UserDetails loadUserByUsername(String correo) throws UsernameNotFoundException {
+    Usuario usuario = usuarioRepository.findByCorreo(correo);
+    return new User(
+        usuario.getCorreo(),
+        "{noop}" + usuario.getClave(),
+        Collections.emptyList()
+    );
+  }
 }

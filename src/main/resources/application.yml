@@ -1,6 +1,7 @@
 spring:
   application:
     name: evaluacion-java-nttdata
+    version: 1.0.0
   h2:
     console:
       path: /h2
@@ -26,5 +27,7 @@ server:
 springdoc:
   swagger-ui:
     path: /doc.html
-application:
-  version: 0.0.1
+validation:
+  regex:
+    correo: ^[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}$
+    clave: ^(?=.*[a-z])(?=.*\d)[A-Za-z\d\$\#\.\_\-]{6,}$

@@ -14,15 +14,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Phone {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+public class Telefono {
 
-    private String number;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private Long id;
 
-    private String citycode;
+  private String numero;
 
-    private String countrycode;
+  private String codigoCiudad;
+
+  private String codigoPais;
 }
-

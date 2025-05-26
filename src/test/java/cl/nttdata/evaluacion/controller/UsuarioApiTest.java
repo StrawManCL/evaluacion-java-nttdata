@@ -9,12 +9,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import cl.nttdata.evaluacion.controller.impl.UserController;
+import cl.nttdata.evaluacion.controller.impl.UsuarioController;
 import cl.nttdata.evaluacion.dto.UsuarioFullResponseDTO;
 import cl.nttdata.evaluacion.dto.UsuarioRequestDTO;
 import cl.nttdata.evaluacion.dto.UsuarioResponseDTO;
-import cl.nttdata.evaluacion.model.User;
-import cl.nttdata.evaluacion.repository.UserRepository;
+import cl.nttdata.evaluacion.fixtures.UsuarioFixture;
+import cl.nttdata.evaluacion.model.Usuario;
+import cl.nttdata.evaluacion.repository.UsuarioRepository;
 import cl.nttdata.evaluacion.service.impl.UsuarioServiceImpl;
 import cl.nttdata.evaluacion.util.JwtUtil;
 import java.time.LocalDate;
@@ -37,36 +38,41 @@ import org.springframework.test.context.aot.DisabledInAotMode;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@ContextConfiguration(classes = {UserApi.class})
+@ContextConfiguration(classes = {UsuarioApi.class})
 @ExtendWith(SpringExtension.class)
 @DisabledInAotMode
-class UserApiTest {
+class UsuarioApiTest {
+
+  private static final UUID ID_USUARIO = UUID.randomUUID();
+  private static final OffsetDateTime FECHA = OffsetDateTime.of(LocalDate.of(1970, 1, 1),
+      LocalTime.MIDNIGHT, ZoneOffset.UTC);
 
   @MockitoBean
-  private UserApi userApi;
+  private UsuarioApi usuarioApi;
 
   @Test
-  void testCreateUser() {
-    ResponseEntity<?> responseEntity = new ResponseEntity<>(HttpStatusCode.valueOf(200));
-    Mockito.<ResponseEntity<?>>when(userApi.createUser(Mockito.any()))
+  void testCrearUsuario() {
+    ResponseEntity<?> responseEntity = new ResponseEntity<>(
+        HttpStatusCode.valueOf(HttpStatus.CREATED.value()));
+    Mockito.<ResponseEntity<?>>when(usuarioApi.crearUsuario(Mockito.any()))
         .thenReturn(responseEntity);
 
-    ResponseEntity<?> actualCreateUserResult = userApi.createUser(
+    ResponseEntity<?> actualCreateUserResult = usuarioApi.crearUsuario(
         new UsuarioRequestDTO("Name", "jane.doe@example.org", "testtest", new ArrayList<>()));
 
-    verify(userApi).createUser(isA(UsuarioRequestDTO.class));
+    verify(usuarioApi).crearUsuario(isA(UsuarioRequestDTO.class));
     assertSame(responseEntity, actualCreateUserResult);
   }
 
   @Test
   void testGetAllUsers() {
-    UserRepository userRepository = mock(UserRepository.class);
-    when(userRepository.findAll()).thenReturn(new ArrayList<>());
+    UsuarioRepository usuarioRepository = mock(UsuarioRepository.class);
+    when(usuarioRepository.findAll()).thenReturn(new ArrayList<>());
 
-    ResponseEntity<List<UsuarioResponseDTO>> actualAllUsers = (new UserController(
-        new UsuarioServiceImpl(userRepository, new JwtUtil()))).getAllUsers();
+    ResponseEntity<List<UsuarioResponseDTO>> actualAllUsers = (new UsuarioController(
+        new UsuarioServiceImpl(usuarioRepository, new JwtUtil()))).listaUsuarios();
 
-    verify(userRepository).findAll();
+    verify(usuarioRepository).findAll();
     HttpStatusCode statusCode = actualAllUsers.getStatusCode();
     assertInstanceOf(HttpStatus.class, statusCode);
     assertEquals(200, actualAllUsers.getStatusCode()
@@ -81,53 +87,39 @@ class UserApiTest {
 
   @Test
   void testGetUser() {
-    User user = new User();
-    user.setActive(true);
-    OffsetDateTime created = OffsetDateTime.of(LocalDate.of(1970, 1, 1), LocalTime.MIDNIGHT,
-        ZoneOffset.UTC);
-    user.setCreated(created);
-    user.setEmail("jane.doe@example.org");
-    UUID id = UUID.randomUUID();
-    user.setId(id);
-    OffsetDateTime lastLogin = OffsetDateTime.of(LocalDate.of(1970, 1, 1), LocalTime.MIDNIGHT,
-        ZoneOffset.UTC);
-    user.setLastLogin(lastLogin);
-    OffsetDateTime modified = OffsetDateTime.of(LocalDate.of(1970, 1, 1), LocalTime.MIDNIGHT,
-        ZoneOffset.UTC);
-    user.setModified(modified);
-    user.setName("Name");
-    user.setPassword("iloveyou");
-    user.setPhones(new ArrayList<>());
-    user.setToken("ABC123");
-    Optional<User> ofResult = Optional.of(user);
-    UserRepository userRepository = mock(UserRepository.class);
-    when(userRepository.findById(Mockito.any())).thenReturn(ofResult);
-    UserController userController = new UserController(
-        new UsuarioServiceImpl(userRepository, new JwtUtil()));
+    Usuario usuario = UsuarioFixture.usuarioSinTelefono(ID_USUARIO, FECHA);
 
-    ResponseEntity<UsuarioFullResponseDTO> actualUser = userController.getUser(UUID.randomUUID());
+    Optional<Usuario> ofResult = Optional.of(usuario);
 
-    verify(userRepository).findById(isA(UUID.class));
-    HttpStatusCode statusCode = actualUser.getStatusCode();
+    UsuarioRepository usuarioRepository = mock(UsuarioRepository.class);
+    when(usuarioRepository.findById(Mockito.any())).thenReturn(ofResult);
+    UsuarioController usuarioController = new UsuarioController(
+        new UsuarioServiceImpl(usuarioRepository, new JwtUtil()));
+
+    ResponseEntity<UsuarioFullResponseDTO> usuarioActual = usuarioController.getUsuario(
+        UUID.randomUUID());
+
+    verify(usuarioRepository).findById(isA(UUID.class));
+    HttpStatusCode statusCode = usuarioActual.getStatusCode();
     assertInstanceOf(HttpStatus.class, statusCode);
-    UsuarioFullResponseDTO body = actualUser.getBody();
+    UsuarioFullResponseDTO body = usuarioActual.getBody();
     assertEquals("ABC123", Objects.requireNonNull(body)
         .token());
-    assertEquals("Name", body.name());
-    assertEquals("iloveyou", body.password());
-    assertEquals("jane.doe@example.org", body.email());
-    assertEquals(200, actualUser.getStatusCode()
+    assertEquals("Juan", body.nombre());
+    assertEquals("hunter2", body.clave());
+    assertEquals("juan@rodriguez.org", body.correo());
+    assertEquals(200, usuarioActual.getStatusCode()
         .value());
     assertEquals(HttpStatus.OK, statusCode);
-    assertTrue(body.isactive());
-    assertTrue(body.phones()
+    assertTrue(body.activo());
+    assertTrue(body.telefono()
         .isEmpty());
-    assertTrue(actualUser.hasBody());
-    assertTrue(actualUser.getHeaders()
+    assertTrue(usuarioActual.hasBody());
+    assertTrue(usuarioActual.getHeaders()
         .isEmpty());
-    assertSame(created, body.created());
-    assertSame(lastLogin, body.lastLogin());
-    assertSame(modified, body.modified());
-    assertSame(id, body.id());
+    assertSame(FECHA, body.creado());
+    assertSame(FECHA, body.modificado());
+    assertSame(FECHA, body.ultimoLogin());
+    assertSame(ID_USUARIO, body.id());
   }
 }

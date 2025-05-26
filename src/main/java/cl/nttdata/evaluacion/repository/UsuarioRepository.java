@@ -1,12 +1,12 @@
 package cl.nttdata.evaluacion.repository;
 
-import cl.nttdata.evaluacion.model.User;
+import cl.nttdata.evaluacion.model.Usuario;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.UUID;
+public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
 
-public interface UserRepository extends JpaRepository<User, UUID> {
-    User findByEmail(String email);
+  Usuario findByCorreo(String correo);
 
-    boolean existsByEmail(String email);
+  boolean existsByCorreo(String correo);
 }

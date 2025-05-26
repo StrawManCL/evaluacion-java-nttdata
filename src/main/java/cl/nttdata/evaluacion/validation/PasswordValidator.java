@@ -1,17 +1,23 @@
-package cl.nttdata.evaluacion.util;
+package cl.nttdata.evaluacion.validation;
+
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import org.springframework.stereotype.Component;
 
 @Component
 public class PasswordValidator implements ConstraintValidator<ValidPassword, String> {
 
-  private final ValidationRegexProperties regexProperties;
+  private final RegexValidator regexValidator;
 
-  public PasswordValidator(ValidationRegexProperties regexProperties) {
-    this.regexProperties = regexProperties;
+  public PasswordValidator(RegexValidator regexValidator) {
+    this.regexValidator = regexValidator;
   }
 
   @Override
   public boolean isValid(String value, ConstraintValidatorContext context) {
-    if (value == null) return false;
-    return value.matches(regexProperties.getClave());
+    if (value == null) {
+      return false;
+    }
+    return value.matches(regexValidator.getClave());
   }
 }

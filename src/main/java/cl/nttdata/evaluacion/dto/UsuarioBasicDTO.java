@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public record UsuarioResponseDTO(
+public record UsuarioBasicDTO(
     @Schema(name = "id", example = "d290f1ee-6c54-4b01-90e6-d701748f0851")
     @JsonProperty("id")
     UUID id,
@@ -31,8 +31,8 @@ public record UsuarioResponseDTO(
     @JsonProperty("activo")
     boolean isActivo
 ) {
-  public static UsuarioResponseDTO fromUser(Usuario user) {
-    return new UsuarioResponseDTO(
+  public static UsuarioBasicDTO fromUser(Usuario user) {
+    return new UsuarioBasicDTO(
         user.getId(),
         user.getCreado(),
         user.getModificado(),

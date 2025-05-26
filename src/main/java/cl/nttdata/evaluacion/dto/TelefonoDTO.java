@@ -3,25 +3,25 @@ package cl.nttdata.evaluacion.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record PhoneDTO(
+public record TelefonoDTO(
         @Schema(
-            name = "number",
+            name = "numero",
             example = "1234567",
             requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("number")
-        String number,
+        @JsonProperty("numero")
+        String numero,
 
         @Schema(
-            name = "citycode",
+            name = "codigoCiudad",
             example = "1",
             requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("citycode")
-        String citycode,
+        @JsonProperty("codigoCiudad")
+        String codigoCiudad,
 
         @Schema(
-            name = "countrycode",
+            name = "codigoPais",
             example = "57",
             requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @JsonProperty("countrycode")
-        String countrycode
+        @JsonProperty("codigoPais")
+        String codigoPais
 ) { }

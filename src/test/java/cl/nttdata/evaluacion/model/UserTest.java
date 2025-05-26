@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 class UserTest {
 
+  private static final UUID ID_USUARIO = UUID.randomUUID();
   private static final OffsetDateTime FECHA = OffsetDateTime.of(LocalDate.of(1970, 1, 1),
       LocalTime.MIDNIGHT, ZoneOffset.UTC);
 
@@ -101,9 +102,8 @@ class UserTest {
 
   @Test
   void testGettersAndSetters() {
-    UUID id = UUID.randomUUID();
     Usuario usuario = new Usuario();
-    usuario.setId(UUID.randomUUID());
+    usuario.setId(ID_USUARIO);
     usuario.setNombre("Juan");
     usuario.setCorreo("juan@rodriguez.org");
     usuario.setTelefono(Collections.emptyList());
@@ -124,6 +124,6 @@ class UserTest {
     assertSame(FECHA, usuario.getCreado());
     assertSame(FECHA, usuario.getUltimoLogin());
     assertSame(FECHA, usuario.getModificado());
-    assertSame(id, usuario.getId());
+    assertSame(ID_USUARIO, usuario.getId());
   }
 }

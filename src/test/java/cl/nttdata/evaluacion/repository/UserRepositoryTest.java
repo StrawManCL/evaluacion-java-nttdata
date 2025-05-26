@@ -40,7 +40,7 @@ class UserRepositoryTest {
         ZoneOffset.UTC);
 
     Usuario usuario = UsuarioFixture.usuarioSinTelefonoSinId(fecha);
-    
+
     usuarioRepository.save(usuario);
 
     boolean encontrado = usuarioRepository.existsByCorreo("juan@rodriguez.org");

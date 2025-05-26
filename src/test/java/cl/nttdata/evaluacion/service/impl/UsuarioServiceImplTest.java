@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import cl.nttdata.evaluacion.dto.TelefonoDTO;
+import cl.nttdata.evaluacion.dto.UsuarioBasicDTO;
 import cl.nttdata.evaluacion.dto.UsuarioFullResponseDTO;
 import cl.nttdata.evaluacion.dto.UsuarioRequestDTO;
 import cl.nttdata.evaluacion.dto.UsuarioResponseDTO;
@@ -65,7 +66,7 @@ class UsuarioServiceImplTest {
   void testFindAllUsers2() {
     Usuario usuario = UsuarioFixture.usuarioSinTelefono(ID_USUARIO, FECHA);
 
-    ArrayList<Usuario> userList = new ArrayList<>();
+    List<Usuario> userList = new ArrayList<>();
     userList.add(usuario);
     when(userRepository.findAll()).thenReturn(userList);
 
@@ -74,11 +75,8 @@ class UsuarioServiceImplTest {
     verify(userRepository).findAll();
     assertEquals(1, actualFindAllUsersResult.size());
     UsuarioResponseDTO getResult = actualFindAllUsersResult.getFirst();
-    assertEquals("ABC123", getResult.token());
-    assertTrue(getResult.isActivo());
-    assertSame(FECHA, getResult.creado());
+    assertTrue(getResult.activo());
     assertSame(FECHA, getResult.ultimoLogin());
-    assertSame(FECHA, getResult.modificado());
     assertSame(ID_USUARIO, getResult.id());
   }
 
@@ -135,7 +133,7 @@ class UsuarioServiceImplTest {
     when(userRepository.save(Mockito.any())).thenReturn(usuario);
     when(jwtUtil.generateToken(Mockito.any())).thenReturn("ABC123");
 
-    UsuarioResponseDTO actualCreateUserResult = userServiceImpl.create(
+    UsuarioBasicDTO actualCreateUserResult = userServiceImpl.create(
         new UsuarioRequestDTO("Juan", "juan@rodriguez.org", "hunter2", new ArrayList<>()));
 
     verify(userRepository).existsByCorreo(eq("juan@rodriguez.org"));
@@ -163,7 +161,7 @@ class UsuarioServiceImplTest {
     ArrayList<TelefonoDTO> phones = new ArrayList<>();
     phones.add(new TelefonoDTO("1234", "2", "56"));
 
-    UsuarioResponseDTO actualCreateUserResult = userServiceImpl.create(
+    UsuarioBasicDTO actualCreateUserResult = userServiceImpl.create(
         new UsuarioRequestDTO("Juan", "juan@rodriguez.org", "iloveyou", phones));
 
     verify(userRepository).existsByCorreo(eq("juan@rodriguez.org"));
@@ -203,7 +201,7 @@ class UsuarioServiceImplTest {
     phones.add(new TelefonoDTO("42", "Oxford", "GB"));
     phones.add(new TelefonoDTO("42", "Oxford", "GB"));
 
-    UsuarioResponseDTO actualCreateUserResult = userServiceImpl.create(
+    UsuarioBasicDTO actualCreateUserResult = userServiceImpl.create(
         new UsuarioRequestDTO("Name", "jane.doe@example.org", "iloveyou", phones));
 
     verify(userRepository).existsByCorreo(eq("jane.doe@example.org"));

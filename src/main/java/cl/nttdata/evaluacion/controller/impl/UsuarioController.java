@@ -1,6 +1,7 @@
 package cl.nttdata.evaluacion.controller.impl;
 
 import cl.nttdata.evaluacion.controller.UsuarioApi;
+import cl.nttdata.evaluacion.dto.UsuarioBasicDTO;
 import cl.nttdata.evaluacion.dto.UsuarioFullResponseDTO;
 import cl.nttdata.evaluacion.dto.UsuarioRequestDTO;
 import cl.nttdata.evaluacion.dto.UsuarioResponseDTO;
@@ -16,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-public class UserController implements UsuarioApi {
+public class UsuarioController implements UsuarioApi {
 
   private final UsuarioService usuarioService;
 
   @Override
   @PreAuthorize("permitAll()")
   public ResponseEntity<?> crearUsuario(UsuarioRequestDTO usuarioRequestDTO) {
-    UsuarioResponseDTO usuarioCreado = usuarioService.create(usuarioRequestDTO);
+    UsuarioBasicDTO usuarioCreado = usuarioService.create(usuarioRequestDTO);
     return new ResponseEntity<>(usuarioCreado, HttpStatus.CREATED);
   }
 
