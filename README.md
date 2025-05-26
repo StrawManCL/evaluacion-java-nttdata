@@ -220,6 +220,28 @@ classDiagram
     UsuarioServiceImpl --> UsuarioRepository
     UsuarioServiceImpl --> JwtUtil
 ```
+## Diagrama de secuencia Creación de usuario
+```mermaid
+sequenceDiagram
+    participant C as Cliente
+    participant Ctrl as Usuario<br/>Controller
+    participant Srv as Usuario<br/>Service
+    participant Repo as Usuario<br/>Repo
+    participant JWT as JWT<br/>Util
+
+    C->>Ctrl: POST /api/usuario (JSON)
+    Ctrl->>Srv: crearUsuario(dto)
+    Srv->>Repo: findByCorreo(correo)
+    alt Correo ya existe
+        Srv-->>Ctrl: Error "El correo ya está registrado"
+        Ctrl-->>C: {"mensaje": "..."}
+    else Correo no existe
+        Srv->>JWT: generarToken(usuario)
+        Srv->>Repo: save(usuario)
+        Srv-->>Ctrl: UsuarioResponse (con token)
+        Ctrl-->>C: 201 Created (JSON usuario)
+    end
+```
 ---
 
 ## Notas adicionales
