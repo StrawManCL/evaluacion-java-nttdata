@@ -131,20 +131,95 @@ mvn test
 
 ```mermaid
 graph TD
-    A[Cliente/API Client] -->|JSON| B[Controlador Usuario - <i>UsuarioController</i>]
-    B -->|DTO| C[Servicio Usuario - <i>UsuarioServiceImpl</i>]
-    C -->|JPA| D[Repositorio Usuario - <i>UsuarioRepository</i>]
-    C -->|JWT| E[JwtUtil]
-    D -->|JPA| F[(Base de Datos H2)]
-    B -->|Validación| G[Validadores - Email/Password]
-    B -->|Errores| H[GlobalExceptionHandler]
+    A[Cliente / API Client] -->|JSON| B[UsuarioController]
+    B -->|DTO| C[UsuarioService]
+    C -->|JPA| D[UsuarioRepository]
+    C -->|JWT| E[JWTUtil]
+    D -->|JPA| F[(H2 DB)]
+    B -->|Validación| G[Validadores]
+    B -->|Errores| H[Exception<br/>Handler]
     subgraph Seguridad
-      I[JwtAuthFilter]
-      I --> B
-      E --> I
+        I[JWT<br/>Filter]
+        I --> B
+        E --> I
     end
 ```
+## Diagrama de clases
+```mermaid
+classDiagram
+    class Usuario {
+        UUID id
+        String nombre
+        String correo
+        String clave
+        List~Telefono~ telefonos
+        LocalDateTime creado
+        LocalDateTime modificado
+        LocalDateTime ultimoLogin
+        String token
+        boolean activo
+    }
 
+    class Telefono {
+        Long id
+        String numero
+        String codigoCiudad
+        String codigoPais
+        Usuario usuario
+    }
+
+    class UsuarioDTO {
+        String nombre
+        String correo
+        String clave
+        List~TelefonoDTO~ telefonos
+    }
+
+    class TelefonoDTO {
+        String numero
+        String codigoCiudad
+        String codigoPais
+    }
+
+    class UsuarioRepository {
+        +Optional~Usuario~ findByCorreo(String correo)
+        +Usuario save(Usuario usuario)
+        +List~Usuario~ findAll()
+        +Optional~Usuario~ findById(UUID id)
+        +void deleteById(UUID id)
+    }
+
+    class UsuarioService {
+        +UsuarioResponse crearUsuario(UsuarioDTO usuarioDTO)
+        +UsuarioResponse obtenerUsuario(UUID id)
+        +List~UsuarioResponse~ listarUsuarios()
+        +UsuarioResponse actualizarUsuario(UUID id, UsuarioDTO usuarioDTO)
+        +void eliminarUsuario(UUID id)
+    }
+
+    class UsuarioServiceImpl
+
+    class UsuarioController {
+        +ResponseEntity crearUsuario(UsuarioDTO usuarioDTO)
+        +ResponseEntity listarUsuarios()
+        +ResponseEntity obtenerUsuario(UUID id)
+        +ResponseEntity actualizarUsuario(UUID id, UsuarioDTO usuarioDTO)
+        +ResponseEntity eliminarUsuario(UUID id)
+    }
+
+    class JwtUtil {
+        +String generarToken(Usuario usuario)
+        +boolean validarToken(String token)
+        +String extraerCorreo(String token)
+    }
+
+    Usuario "1" o-- "*" Telefono
+    UsuarioDTO "1" o-- "*" TelefonoDTO
+    UsuarioService <|-- UsuarioServiceImpl
+    UsuarioController --> UsuarioService
+    UsuarioServiceImpl --> UsuarioRepository
+    UsuarioServiceImpl --> JwtUtil
+```
 ---
 
 ## Notas adicionales
